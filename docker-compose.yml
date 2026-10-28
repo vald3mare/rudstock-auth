@@ -1,0 +1,23 @@
+name: rudstock-auth
+
+# Своя база у auth: таблицы users и sessions не делим с другими сервисами.
+# Порт 5433 снаружи, чтобы не конфликтовать с Postgres каталога на 5432.
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: auth
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth -d auth"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

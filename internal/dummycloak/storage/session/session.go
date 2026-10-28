@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 type SessionRepo interface {

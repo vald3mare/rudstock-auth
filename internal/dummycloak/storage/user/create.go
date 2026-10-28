@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 const createQuery = `

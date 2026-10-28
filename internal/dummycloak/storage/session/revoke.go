@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 // revoked_at IS NULL: гасим только живую; второй такой же запрос затронет 0 строк,

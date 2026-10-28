@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/vald3mare/Rudstock/auth/internal/models"
-	"github.com/vald3mare/Rudstock/auth/internal/platform/errs"
-	"github.com/vald3mare/Rudstock/auth/internal/platform/httpx"
+	"github.com/vald3mare/rudstock-auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/platform/errs"
+	"github.com/vald3mare/rudstock-auth/internal/platform/httpx"
 )
 
 // verifier что middleware нужно от сервиса: проверка access-токена идёт по тем же слоям,

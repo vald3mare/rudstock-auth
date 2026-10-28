@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
-	"github.com/vald3mare/Rudstock/auth/internal/models"
-	authsvc "github.com/vald3mare/Rudstock/auth/internal/services/auth"
+	"github.com/vald3mare/rudstock-auth/internal/models"
+	authsvc "github.com/vald3mare/rudstock-auth/internal/services/auth"
 )
 
 type authService interface {

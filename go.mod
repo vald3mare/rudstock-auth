@@ -1,4 +1,4 @@
-module github.com/vald3mare/Rudstock/auth
+module github.com/vald3mare/rudstock-auth
 
 go 1.25.6
 

@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 // keycloak контракт identity-провайдера: сейчас его реализует dummycloak, потом адаптер к настоящему Keycloak

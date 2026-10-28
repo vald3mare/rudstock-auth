@@ -3,8 +3,8 @@ package auth
 import (
 	"errors"
 
-	"github.com/vald3mare/Rudstock/auth/internal/models"
-	"github.com/vald3mare/Rudstock/auth/internal/platform/errs"
+	"github.com/vald3mare/rudstock-auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/platform/errs"
 )
 
 // mapAuthError переводит доменные ошибки в errs, чтобы httpx выбрал правильный код.

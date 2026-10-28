@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 // newSession генерирует refresh-токен и собирает под него сессию; в базу не пишет.

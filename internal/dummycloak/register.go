@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/alexedwards/argon2id"
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 func (c *cloak) Register(ctx context.Context, email, password string) (models.User, models.Tokens, error) {

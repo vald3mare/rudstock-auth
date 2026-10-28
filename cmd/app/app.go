@@ -7,16 +7,16 @@ import (
 	"github.com/alexedwards/argon2id"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/vald3mare/Rudstock/auth/internal/controllers"
-	authCtrl "github.com/vald3mare/Rudstock/auth/internal/controllers/auth"
-	"github.com/vald3mare/Rudstock/auth/internal/dummycloak"
-	sessionStore "github.com/vald3mare/Rudstock/auth/internal/dummycloak/storage/session"
-	userStore "github.com/vald3mare/Rudstock/auth/internal/dummycloak/storage/user"
-	"github.com/vald3mare/Rudstock/auth/internal/dummycloak/tokens"
-	authMw "github.com/vald3mare/Rudstock/auth/internal/infrastructure/middleware/auth"
-	"github.com/vald3mare/Rudstock/auth/internal/platform/config"
-	authRepo "github.com/vald3mare/Rudstock/auth/internal/repositories/auth"
-	authSvc "github.com/vald3mare/Rudstock/auth/internal/services/auth"
+	"github.com/vald3mare/rudstock-auth/internal/controllers"
+	authCtrl "github.com/vald3mare/rudstock-auth/internal/controllers/auth"
+	"github.com/vald3mare/rudstock-auth/internal/dummycloak"
+	sessionStore "github.com/vald3mare/rudstock-auth/internal/dummycloak/storage/session"
+	userStore "github.com/vald3mare/rudstock-auth/internal/dummycloak/storage/user"
+	"github.com/vald3mare/rudstock-auth/internal/dummycloak/tokens"
+	authMw "github.com/vald3mare/rudstock-auth/internal/infrastructure/middleware/auth"
+	"github.com/vald3mare/rudstock-auth/internal/platform/config"
+	authRepo "github.com/vald3mare/rudstock-auth/internal/repositories/auth"
+	authSvc "github.com/vald3mare/rudstock-auth/internal/services/auth"
 )
 
 // App собранное приложение auth: все слои связаны, наружу отдаётся только роутер.

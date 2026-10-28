@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/vald3mare/Rudstock/auth/internal/platform/errs"
+	"github.com/vald3mare/rudstock-auth/internal/platform/errs"
 )
 
 // DecodeJSON разбирает тело запроса в dst и возвращает ошибку приложения,

@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/vald3mare/Rudstock/auth/cmd/app"
-	"github.com/vald3mare/Rudstock/auth/internal/platform/config"
-	"github.com/vald3mare/Rudstock/auth/internal/platform/httpx"
+	"github.com/vald3mare/rudstock-auth/cmd/app"
+	"github.com/vald3mare/rudstock-auth/internal/platform/config"
+	"github.com/vald3mare/rudstock-auth/internal/platform/httpx"
 )
 
 func Health(w http.ResponseWriter, r *http.Request) {

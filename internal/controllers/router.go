@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/vald3mare/Rudstock/auth/internal/controllers/auth"
+	"github.com/vald3mare/rudstock-auth/internal/controllers/auth"
 )
 
 // NewRouter вешает ручки; requireAuth собирается в cmd/app и закрывает ручки, которым нужен access-токен.

@@ -8,7 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/vald3mare/Rudstock/auth/internal/platform/errs"
+	"github.com/vald3mare/rudstock-auth/internal/platform/errs"
 )
 
 // ErrorResponse это тело ответа при ошибке. Наружу уходят только слаг и сообщение:

@@ -1,6 +1,6 @@
 package auth
 
-import "github.com/vald3mare/Rudstock/auth/internal/models"
+import "github.com/vald3mare/rudstock-auth/internal/models"
 
 // AuthResult ответ register/login: токены и данные пользователя для {user: {...}}
 type AuthResult struct {

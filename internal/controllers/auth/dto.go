@@ -2,8 +2,8 @@ package auth
 
 import (
 	"github.com/google/uuid"
-	"github.com/vald3mare/Rudstock/auth/internal/models"
-	authsvc "github.com/vald3mare/Rudstock/auth/internal/services/auth"
+	"github.com/vald3mare/rudstock-auth/internal/models"
+	authsvc "github.com/vald3mare/rudstock-auth/internal/services/auth"
 )
 
 type RegisterRequest struct {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 // Logout гасит всю семью, а не одну сессию: если клиент прислал уже обменянный refresh,

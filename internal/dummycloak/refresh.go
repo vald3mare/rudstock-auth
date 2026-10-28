@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 func (c *cloak) Refresh(ctx context.Context, refresh string) (models.Tokens, error) {

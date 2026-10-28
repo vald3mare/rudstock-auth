@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/vald3mare/Rudstock/auth/internal/dummycloak/tokens"
-	"github.com/vald3mare/Rudstock/auth/internal/models"
+	"github.com/vald3mare/rudstock-auth/internal/dummycloak/tokens"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
 // CheckExpire проверяет подпись и срок access-токена локально, без похода в базу:
