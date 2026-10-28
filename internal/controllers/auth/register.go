@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/vald3mare/rudstock-auth/internal/platform/httpx"
+	"github.com/vald3mare/rudstock-platform/httpx"
 )
 
 // POST /auth/register

@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	authmw "github.com/vald3mare/rudstock-auth/internal/infrastructure/middleware/auth"
-	"github.com/vald3mare/rudstock-auth/internal/platform/errs"
-	"github.com/vald3mare/rudstock-auth/internal/platform/httpx"
+	"github.com/vald3mare/rudstock-platform/errs"
+	"github.com/vald3mare/rudstock-platform/httpx"
 )
 
 func (h *AuthHandler) Verify(w http.ResponseWriter, r *http.Request) {
