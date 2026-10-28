@@ -13,8 +13,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/vald3mare/rudstock-auth/cmd/app"
-	"github.com/vald3mare/rudstock-auth/internal/platform/config"
-	"github.com/vald3mare/rudstock-auth/internal/platform/httpx"
+	"github.com/vald3mare/rudstock-auth/internal/config"
+	"github.com/vald3mare/rudstock-platform/httpx"
 )
 
 func Health(w http.ResponseWriter, r *http.Request) {

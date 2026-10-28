@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/vald3mare/rudstock-auth/internal/models"
-	"github.com/vald3mare/rudstock-auth/internal/platform/errs"
-	"github.com/vald3mare/rudstock-auth/internal/platform/httpx"
+	"github.com/vald3mare/rudstock-platform/errs"
+	"github.com/vald3mare/rudstock-platform/httpx"
 )
 
 // verifier что middleware нужно от сервиса: проверка access-токена идёт по тем же слоям,
