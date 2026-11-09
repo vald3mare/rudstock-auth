@@ -9,11 +9,9 @@ import (
 	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
-func (c *cloak) Login(ctx context.Context, email, password string) (models.User, models.Tokens, error) {
-	user, err := c.users.GetByEmail(ctx, email)
+func (c *dummyCloak) Login(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error) {
+	user, err = c.users.GetByEmail(ctx, email)
 	if errors.Is(err, models.ErrUserNotFound) {
-		// результат не важен, важно потраченное время (см. dummyHash)
-		_, _ = argon2id.ComparePasswordAndHash(password, c.dummyHash)
 		return models.User{}, models.Tokens{}, models.ErrInvalidCredentials
 	}
 	if err != nil {
@@ -33,7 +31,7 @@ func (c *cloak) Login(ctx context.Context, email, password string) (models.User,
 		return models.User{}, models.Tokens{}, models.ErrUserInactive
 	}
 
-	tokens, err := c.startSession(ctx, user)
+	tokens, err = c.startSession(ctx, user)
 	if err != nil {
 		return models.User{}, models.Tokens{}, err
 	}

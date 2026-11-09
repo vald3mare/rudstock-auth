@@ -9,7 +9,7 @@ import (
 	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
-func (c *cloak) Refresh(ctx context.Context, refresh string) (models.Tokens, error) {
+func (c *dummyCloak) Refresh(ctx context.Context, refresh string) (models.Tokens, error) {
 	session, err := c.sessions.GetByTokenHash(ctx, c.emitter.HashRefresh(refresh))
 	if errors.Is(err, models.ErrSessionNotFound) {
 		return models.Tokens{}, models.ErrInvalidRefresh

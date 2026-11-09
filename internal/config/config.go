@@ -1,14 +1,15 @@
 package config
 
 import (
+	"errors"
 	"time"
 
 	platformconfig "github.com/vald3mare/rudstock-platform/config"
 )
 
-// Config собирается из переменных окружения на старте приложения.
+// Config собирается из переменных окружения на старте приложения
 // У всего, кроме секретов, есть значение по умолчанию; секреты обязательны,
-// поэтому приложение падает, если они не заданы.
+// поэтому приложение падает, если они не заданы
 type Config struct {
 	// HTTPAddr это адрес, на котором слушает HTTP-сервер; catalog занимает :8081.
 	HTTPAddr string `env:"HTTP_ADDR" envDefault:":8082"`
@@ -19,8 +20,8 @@ type Config struct {
 	// EnvMode различает окружения: development, staging, production.
 	EnvMode string `env:"ENV_MODE" envDefault:"development"`
 
-	// JWTSecret ключ подписи access-токенов (HS256), не короче 32 байт. Секрет, без значения по умолчанию.
-	JWTSecret string `env:"JWT_SECRET,required"`
+	// JWTSecret ключ подписи access-токенов (HS256), не короче 32 байт. Обязателен для dummycloak.
+	JWTSecret string `env:"JWT_SECRET"`
 	// JWTIssuer пишется в iss и проверяется в Verify.
 	JWTIssuer string `env:"JWT_ISSUER" envDefault:"rudstock-auth"`
 	// AccessTTL срок жизни access-токена: после logout он проживёт ещё столько же.
@@ -39,6 +40,12 @@ type Config struct {
 	Argon2Parallelism uint8  `env:"ARGON2_PARALLELISM" envDefault:"2"`
 	Argon2SaltLength  uint32 `env:"ARGON2_SALT_LENGTH" envDefault:"16"`
 	Argon2KeyLength   uint32 `env:"ARGON2_KEY_LENGTH" envDefault:"32"`
+
+	KeyCloak             string `env:"KEYCLOAK" envDefault:"dummycloak"` // тут либо dummycloak либо keycloak
+	KeycloakURL          string `env:"KEYCLOAK_URL"`
+	KeycloakRealm        string `env:"KEYCLOAK_REALM"`
+	KeycloakClientID     string `env:"KEYCLOAK_CLIENT_ID"`
+	KeycloakClientSecret string `env:"KEYCLOAK_CLIENT_SECRET"`
 }
 
 // Load читает .env (если он есть), затем конфигурацию из окружения
@@ -47,6 +54,9 @@ func Load() (*Config, error) {
 	cfg := &Config{}
 	if err := platformconfig.Load(cfg); err != nil {
 		return nil, err
+	}
+	if cfg.KeyCloak == "dummycloak" && cfg.JWTSecret == "" {
+		return nil, errors.New("JWT_SECRET is required for dummycloak")
 	}
 	return cfg, nil
 }

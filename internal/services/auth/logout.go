@@ -7,5 +7,5 @@ func (s *authService) Logout(ctx context.Context, refresh string) error {
 		return nil
 	}
 
-	return s.authRepo.Logout(ctx, refresh)
+	return s.provider.Logout(ctx, refresh)
 }

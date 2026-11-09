@@ -27,7 +27,6 @@ type userRepo struct {
 	pool *pgxpool.Pool
 }
 
-// NewUserRepo конструктор репозитория пользователей.
 func NewUserRepo(pool *pgxpool.Pool) UserRepo {
 	return &userRepo{pool: pool}
 }

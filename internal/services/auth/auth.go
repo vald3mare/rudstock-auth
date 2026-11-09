@@ -27,19 +27,19 @@ type AuthService interface {
 	CheckExpire(ctx context.Context, access string) (models.Identity, error)
 }
 
-// AuthRepo что сервису нужно от репозитория (repositories/auth поверх keycloak)
-type AuthRepo interface {
-	Register(ctx context.Context, email, password string) (models.User, models.Tokens, error)
-	Login(ctx context.Context, email, password string) (models.User, models.Tokens, error)
+// AuthProvider описывает операции провайдера, которые нужны сервису.
+type AuthProvider interface {
+	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
+	Login(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
 	Logout(ctx context.Context, refresh string) error
 	Refresh(ctx context.Context, refresh string) (models.Tokens, error)
 	CheckExpire(ctx context.Context, access string) (models.Identity, error)
 }
 
 type authService struct {
-	authRepo AuthRepo
+	provider AuthProvider
 }
 
-func NewAuthService(repo AuthRepo) AuthService {
-	return &authService{authRepo: repo}
+func NewAuthService(provider AuthProvider) AuthService {
+	return &authService{provider: provider}
 }

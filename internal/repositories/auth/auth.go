@@ -6,25 +6,24 @@ import (
 	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
-// keycloak контракт identity-провайдера: сейчас его реализует dummycloak, потом адаптер к настоящему Keycloak
-// Репозиторий про реализацию не знает, поэтому замена провайдера не трогает ни его, ни сервис
-type keycloak interface {
-	Register(ctx context.Context, email, password string) (models.User, models.Tokens, error)
-	Login(ctx context.Context, email, password string) (models.User, models.Tokens, error)
+// пришлось делать интерфейс экспортируемым, чтобы при подключении адаптера можно было вернуть именно этот интерфейс
+type Cloak interface {
+	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
+	Login(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
 	Logout(ctx context.Context, refresh string) error
 	Refresh(ctx context.Context, refresh string) (models.Tokens, error)
 	CheckExpire(ctx context.Context, access string) (models.Identity, error)
 }
 
-// AuthRepo доступ сервиса к identity-провайдеру.
+// AuthRepo доступ сервиса к identity-провайдеру
 type AuthRepo interface {
 	// Register заводит покупателя и сразу выдаёт токены.
 	// Ошибки: models.ErrEmailTaken.
-	Register(ctx context.Context, email, password string) (models.User, models.Tokens, error)
+	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
 
 	// Login проверяет пароль и выдаёт токены.
 	// Ошибки: models.ErrInvalidCredentials, models.ErrUserInactive.
-	Login(ctx context.Context, email, password string) (models.User, models.Tokens, error)
+	Login(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
 
 	// Logout гасит вход по refresh.
 	Logout(ctx context.Context, refresh string) error
@@ -39,10 +38,10 @@ type AuthRepo interface {
 }
 
 type authRepo struct {
-	keycloak keycloak
+	keycloak Cloak
 }
 
 // NewAuthRepo конструктор репозитория поверх identity-провайдера.
-func NewAuthRepo(kc keycloak) AuthRepo {
+func NewAuthRepo(kc Cloak) AuthRepo {
 	return &authRepo{keycloak: kc}
 }
