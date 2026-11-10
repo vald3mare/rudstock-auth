@@ -11,13 +11,21 @@ import (
 	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
+const (
+	introspectionEndpoint = "token/introspect"
+	tokenKey              = "token"
+	tokenTypeHintKey      = "token_type_hint"
+	accessTokenHint       = "access_token"
+)
+
 func (a *keycloack) checkAccessToken(ctx context.Context, access string) (claims accessTokenResponse, identity models.Identity, err error) {
 	if access == "" {
 		return claims, identity, models.ErrInvalidToken
 	}
-	if err := a.postForm(ctx, "token/introspect", url.Values{
-		"token": {access}, "token_type_hint": {"access_token"},
-	}, &claims); err != nil {
+	if err := a.postForm(ctx, introspectionEndpoint, url.Values{
+		tokenKey:         {access},
+		tokenTypeHintKey: {accessTokenHint},
+	}.Encode(), &claims); err != nil {
 		return claims, identity, fmt.Errorf("introspect Keycloak access token: %w", err)
 	}
 	if claims.Issuer != a.issuer || claims.ClientID != a.clientID || claims.TokenType != "Bearer" {
@@ -39,9 +47,4 @@ func (a *keycloack) checkAccessToken(ctx context.Context, access string) (claims
 		role = models.RoleAdmin
 	}
 	return claims, models.Identity{UserID: userID, SessionID: sessionID, Role: role}, nil
-}
-
-func (a *keycloack) CheckExpire(ctx context.Context, access string) (models.Identity, error) {
-	_, identity, err := a.checkAccessToken(ctx, access)
-	return identity, err
 }

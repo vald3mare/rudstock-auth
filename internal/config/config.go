@@ -7,6 +7,11 @@ import (
 	platformconfig "github.com/vald3mare/rudstock-platform/config"
 )
 
+const (
+	ProviderDummycloak = "dummycloak"
+	ProviderKeycloak   = "keycloak"
+)
+
 // Config собирается из переменных окружения на старте приложения
 // У всего, кроме секретов, есть значение по умолчанию; секреты обязательны,
 // поэтому приложение падает, если они не заданы
@@ -41,7 +46,7 @@ type Config struct {
 	Argon2SaltLength  uint32 `env:"ARGON2_SALT_LENGTH" envDefault:"16"`
 	Argon2KeyLength   uint32 `env:"ARGON2_KEY_LENGTH" envDefault:"32"`
 
-	KeyCloak             string `env:"KEYCLOAK" envDefault:"dummycloak"` // тут либо dummycloak либо keycloak
+	KeyCloak             string `env:"KEYCLOAK" envDefault:"keycloak"` // тут либо dummycloak либо keycloak
 	KeycloakURL          string `env:"KEYCLOAK_URL"`
 	KeycloakRealm        string `env:"KEYCLOAK_REALM"`
 	KeycloakClientID     string `env:"KEYCLOAK_CLIENT_ID"`
@@ -55,7 +60,7 @@ func Load() (*Config, error) {
 	if err := platformconfig.Load(cfg); err != nil {
 		return nil, err
 	}
-	if cfg.KeyCloak == "dummycloak" && cfg.JWTSecret == "" {
+	if cfg.KeyCloak == ProviderDummycloak && cfg.JWTSecret == "" {
 		return nil, errors.New("JWT_SECRET is required for dummycloak")
 	}
 	return cfg, nil
