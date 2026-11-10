@@ -22,8 +22,6 @@ func Health(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// Конфиг читается первым: без него неизвестен даже уровень логирования,
-	// поэтому ошибка выводится через fmt и процесс выходит с ненулевым кодом.
 	conf, err := config.Load()
 	if err != nil {
 		fmt.Println("Error loading config:", err)
@@ -31,14 +29,13 @@ func main() {
 	}
 
 	var handler slog.Handler
-
 	var level slog.Level
-	// Нераспознанный уровень не повод падать: продолжаем с INFO.
+
 	if err := level.UnmarshalText([]byte(conf.LogLevel)); err != nil {
 		level = slog.LevelInfo
 	}
 
-	// В продакшене JSON для машинного разбора, локально текст для чтения глазами.
+	// В продакшене JSON для машинного разбора, локально текст для чтения глазами
 	if conf.EnvMode == "production" {
 		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level})
 	} else {
@@ -48,7 +45,7 @@ func main() {
 	slog.SetDefault(slog.New(handler))
 
 	// Контекст отменяется по SIGINT/SIGTERM. Создаём его до подключения к базе,
-	// чтобы Ctrl+C прерывал и старт, а не только работу сервера.
+	// чтобы Ctrl+C прерывал и старт, а не только работу сервера
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 

@@ -11,7 +11,7 @@ import (
 
 // newSession генерирует refresh-токен и собирает под него сессию; в базу не пишет.
 // authenticatedAt при ротации переносится из старой сессии, от него считается абсолютный предел.
-func (c *cloak) newSession(userID, familyID uuid.UUID, authenticatedAt time.Time) (string, models.Session, error) {
+func (c *dummyCloak) newSession(userID, familyID uuid.UUID, authenticatedAt time.Time) (refreshToken string, session models.Session, err error) {
 	raw, hash, err := c.emitter.Refresh()
 	if err != nil {
 		return "", models.Session{}, fmt.Errorf("generate refresh: %w", err)
@@ -33,7 +33,7 @@ func (c *cloak) newSession(userID, familyID uuid.UUID, authenticatedAt time.Time
 }
 
 // startSession открывает новый вход (register/login): новая семья, сессия в базе, пара токенов.
-func (c *cloak) startSession(ctx context.Context, user models.User) (models.Tokens, error) {
+func (c *dummyCloak) startSession(ctx context.Context, user models.User) (models.Tokens, error) {
 	raw, session, err := c.newSession(user.ID, uuid.New(), time.Now())
 	if err != nil {
 		return models.Tokens{}, err

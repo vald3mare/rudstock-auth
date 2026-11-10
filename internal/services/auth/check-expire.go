@@ -7,5 +7,5 @@ import (
 )
 
 func (s *authService) CheckExpire(ctx context.Context, access string) (models.Identity, error) {
-	return s.authRepo.CheckExpire(ctx, access)
+	return s.provider.CheckExpire(ctx, access)
 }

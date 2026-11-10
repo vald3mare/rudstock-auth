@@ -34,6 +34,11 @@ type SessionRepo interface {
 	RevokeAllByUser(ctx context.Context, userID uuid.UUID) error
 }
 
+// querier общее у pool и tx: insert работает и сам по себе, и внутри Rotate
+type querier interface {
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+}
+
 type sessionRepo struct {
 	pool *pgxpool.Pool
 }
@@ -50,9 +55,4 @@ func scanSession(row pgx.Row) (models.Session, error) {
 	var s models.Session
 	err := row.Scan(&s.ID, &s.UserID, &s.FamilyID, &s.TokenHash, &s.AuthenticatedAt, &s.ExpiresAt, &s.CreatedAt, &s.RevokedAt)
 	return s, err
-}
-
-// querier общее у pool и tx: insert работает и сам по себе, и внутри Rotate.
-type querier interface {
-	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 }

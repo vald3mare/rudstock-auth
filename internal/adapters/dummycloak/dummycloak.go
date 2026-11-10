@@ -1,29 +1,24 @@
-// Package dummycloak наша реализация identity-провайдера по контракту Keycloak.
-// Внутри всё, что потом заберёт настоящий Keycloak: хеши паролей, сессии и ротация refresh,
-// выпуск и проверка токенов, своя база (users, sessions). Остальные слои видят только Keycloak.
 package dummycloak
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/alexedwards/argon2id"
 	"github.com/google/uuid"
 	"github.com/vald3mare/rudstock-auth/internal/models"
+	authRepo "github.com/vald3mare/rudstock-auth/internal/repositories/auth" // тут допустим репо?
 )
 
-// Keycloak контракт identity-провайдера; его же потом реализует адаптер к настоящему Keycloak.
-type Keycloak interface {
+type Dummycloak interface {
 	// Register заводит покупателя и сразу открывает сессию.
 	// Ошибки: models.ErrEmailTaken.
-	Register(ctx context.Context, email, password string) (models.User, models.Tokens, error)
+	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
 
 	// Login проверяет пароль и открывает сессию.
 	// Ошибки: models.ErrInvalidCredentials, models.ErrUserInactive.
-	Login(ctx context.Context, email, password string) (models.User, models.Tokens, error)
+	Login(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
 
 	// Logout гасит вход, которому принадлежит refresh. Неизвестный refresh не ошибка.
 	Logout(ctx context.Context, refresh string) error
@@ -37,14 +32,14 @@ type Keycloak interface {
 	CheckExpire(ctx context.Context, access string) (models.Identity, error)
 }
 
-// userStore что dummycloak нужно от хранилища пользователей (storage/user)
+// userStore что dummycloak нужно от хранилища пользователей (repositories/user)
 type userStore interface {
 	Create(ctx context.Context, user models.User) (uuid.UUID, error)
 	GetByEmail(ctx context.Context, email string) (models.User, error)
 	GetByID(ctx context.Context, id uuid.UUID) (models.User, error)
 }
 
-// sessionStore что dummycloak нужно от хранилища сессий (storage/session)
+// sessionStore что dummycloak нужно от хранилища сессий (repositories/session)
 type sessionStore interface {
 	Create(ctx context.Context, s models.Session) (uuid.UUID, error)
 	GetByTokenHash(ctx context.Context, hash []byte) (models.Session, error)
@@ -67,33 +62,22 @@ type Config struct {
 	Argon2        argon2id.Params // параметры хеширования паролей
 }
 
-type cloak struct {
+type dummyCloak struct {
 	users    userStore
 	sessions sessionStore
 	emitter  emitter
 	conf     Config
-
-	// dummyHash для Login с несуществующим email: сравниваем пароль с ним, чтобы ответ шёл столько же,
-	// сколько с существующим, и по времени нельзя было узнать, зарегистрирован ли email.
-	// Считается с теми же параметрами, что и настоящие хеши, иначе время будет отличаться
-	dummyHash string
 }
 
-func New(users userStore, sessions sessionStore, emitter emitter, conf Config) (Keycloak, error) {
+func New(users userStore, sessions sessionStore, emitter emitter, conf Config) (authRepo.Cloak, error) {
 	if conf.RefreshTTL <= 0 || conf.RefreshMaxTTL <= 0 {
 		return nil, errors.New("refresh ttl must be positive")
 	}
 
-	dummyHash, err := argon2id.CreateHash(rand.Text(), &conf.Argon2)
-	if err != nil {
-		return nil, fmt.Errorf("create dummy hash: %w", err)
-	}
-
-	return &cloak{
-		users:     users,
-		sessions:  sessions,
-		emitter:   emitter,
-		conf:      conf,
-		dummyHash: dummyHash,
+	return &dummyCloak{
+		users:    users,
+		sessions: sessions,
+		emitter:  emitter,
+		conf:     conf,
 	}, nil
 }

@@ -12,7 +12,7 @@ import (
 )
 
 // verifier что middleware нужно от сервиса: проверка access-токена идёт по тем же слоям,
-// что и ручки (service -> repo -> keycloak), сама middleware токены не разбирает
+// что и ручки (service -> auth provider), сама middleware токены не разбирает
 type verifier interface {
 	CheckExpire(ctx context.Context, access string) (models.Identity, error)
 }

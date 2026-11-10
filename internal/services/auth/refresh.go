@@ -11,5 +11,5 @@ func (s *authService) Refresh(ctx context.Context, refresh string) (models.Token
 		return models.Tokens{}, models.ErrInvalidRefresh
 	}
 
-	return s.authRepo.Refresh(ctx, refresh)
+	return s.provider.Refresh(ctx, refresh)
 }

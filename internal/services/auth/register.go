@@ -18,7 +18,7 @@ func (s *authService) Register(ctx context.Context, in RegUserInput) (AuthResult
 		return AuthResult{}, models.ErrWeakPassword
 	}
 
-	user, tokens, err := s.authRepo.Register(ctx, email, in.Password)
+	user, tokens, err := s.provider.Register(ctx, email, in.Password)
 	if err != nil {
 		return AuthResult{}, err
 	}
