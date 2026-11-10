@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/alexedwards/argon2id"
@@ -9,14 +10,22 @@ import (
 	"github.com/vald3mare/rudstock-auth/internal/adapters/dummycloak/tokens"
 	"github.com/vald3mare/rudstock-auth/internal/adapters/keycloak"
 	"github.com/vald3mare/rudstock-auth/internal/config"
-	authRepo "github.com/vald3mare/rudstock-auth/internal/repositories/auth"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 	"github.com/vald3mare/rudstock-auth/internal/repositories/session"
 	"github.com/vald3mare/rudstock-auth/internal/repositories/user"
 )
 
-func NewCloak(pool *pgxpool.Pool, conf *config.Config) (authRepo.Cloak, error) {
+type Cloak interface {
+	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
+	Login(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
+	Logout(ctx context.Context, refresh string) error
+	Refresh(ctx context.Context, refresh string) (models.Tokens, error)
+	CheckExpire(ctx context.Context, access string) (models.Identity, error)
+}
+
+func NewCloak(pool *pgxpool.Pool, conf *config.Config) (Cloak, error) {
 	switch conf.KeyCloak {
-	case "dummycloak":
+	case config.ProviderDummycloak:
 		users := user.NewUserRepo(pool)
 		sessions := session.NewSessionRepo(pool)
 		emitter, err := tokens.NewEmitter([]byte(conf.JWTSecret), conf.JWTIssuer, conf.AccessTTL, conf.RefreshTokenBytes)
@@ -35,7 +44,7 @@ func NewCloak(pool *pgxpool.Pool, conf *config.Config) (authRepo.Cloak, error) {
 				KeyLength:   conf.Argon2KeyLength,
 			},
 		})
-	case "keycloak":
+	case config.ProviderKeycloak:
 		return keycloak.New(keycloak.Config{
 			BaseURL:      conf.KeycloakURL,
 			Realm:        conf.KeycloakRealm,

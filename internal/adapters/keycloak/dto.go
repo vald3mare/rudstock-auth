@@ -20,10 +20,16 @@ type accessTokenResponse struct {
 }
 
 type createUserRequest struct {
-	Username    string               `json:"username"`
-	Email       string               `json:"email"`
-	Enabled     bool                 `json:"enabled"`
-	Credentials []passwordCredential `json:"credentials"`
+	Username    string      `json:"username"`
+	Email       string      `json:"email"`
+	Enabled     bool        `json:"enabled"`
+	Credentials credentials `json:"credentials"`
+}
+
+type credentials []passwordCredential
+
+func newPasswordCredentials(password string) credentials {
+	return credentials{{Type: "password", Value: password}}
 }
 
 type passwordCredential struct {

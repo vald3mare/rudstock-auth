@@ -1,49 +1,68 @@
 package keycloak
 
 import (
-	"errors"
+	"context"
 	"net/http"
 	"net/url"
 	"time"
 
-	authRepo "github.com/vald3mare/rudstock-auth/internal/repositories/auth"
+	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
+const (
+	tokenEndpoint              = "token"
+	grantTypeKey               = "grant_type"
+	grantTypePassword          = "password"
+	grantTypeClientCredentials = "client_credentials"
+	refreshTokenKey            = "refresh_token"
+	grantTypeRefreshToken      = "refresh_token"
+)
+
+type Cloak interface {
+	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
+	Login(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
+	Logout(ctx context.Context, refresh string) error
+	Refresh(ctx context.Context, refresh string) (models.Tokens, error)
+	CheckExpire(ctx context.Context, access string) (models.Identity, error)
+}
+
 type Config struct {
-	BaseURL      string
-	Realm        string
-	ClientID     string
-	ClientSecret string
+	BaseURL      string //{base_url}
+	Realm        string //{base_url}/admin/realms
+	ClientID     string //
+	ClientSecret string //
 }
 
 type keycloack struct {
 	client       *http.Client
 	issuer       string
-	usersURL     string
+	baseURL      *url.URL
+	realm        string
 	clientID     string
 	clientSecret string
 }
 
-func New(conf Config) (authRepo.Cloak, error) {
-	base, err := url.Parse(conf.BaseURL)
-	if err != nil || (base.Scheme != "https" && base.Scheme != "http") ||
-		base.Host == "" || base.User != nil || base.RawQuery != "" || base.Fragment != "" {
-		return nil, errors.New("invalid Keycloak base URL")
+func New(conf Config) (Cloak, error) {
+	base, err := conf.validate()
+	if err != nil {
+		return nil, err
 	}
-	if conf.Realm == "" || conf.Realm == "." || conf.Realm == ".." ||
-		conf.ClientID == "" || conf.ClientSecret == "" {
-		return nil, errors.New("Keycloak realm, client ID and client secret are required")
-	}
+
 	return &keycloack{
-		client: &http.Client{
-			Timeout: 10 * time.Second,
-			CheckRedirect: func(*http.Request, []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-		},
+		client:       newHTTPClient(),
+		baseURL:      base,
+		realm:        conf.Realm,
 		issuer:       base.JoinPath("realms", url.PathEscape(conf.Realm)).String(),
-		usersURL:     base.JoinPath("admin", "realms", url.PathEscape(conf.Realm), "users").String(),
 		clientID:     conf.ClientID,
 		clientSecret: conf.ClientSecret,
 	}, nil
+}
+
+func newHTTPClient() *http.Client {
+	return &http.Client{
+		Timeout: 10 * time.Second,
+		CheckRedirect: func(*http.Request, []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
 }

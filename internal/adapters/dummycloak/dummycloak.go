@@ -8,10 +8,9 @@ import (
 	"github.com/alexedwards/argon2id"
 	"github.com/google/uuid"
 	"github.com/vald3mare/rudstock-auth/internal/models"
-	authRepo "github.com/vald3mare/rudstock-auth/internal/repositories/auth" // тут допустим репо?
 )
 
-type Dummycloak interface {
+type Cloak interface {
 	// Register заводит покупателя и сразу открывает сессию.
 	// Ошибки: models.ErrEmailTaken.
 	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
@@ -69,7 +68,7 @@ type dummyCloak struct {
 	conf     Config
 }
 
-func New(users userStore, sessions sessionStore, emitter emitter, conf Config) (authRepo.Cloak, error) {
+func New(users userStore, sessions sessionStore, emitter emitter, conf Config) (Cloak, error) {
 	if conf.RefreshTTL <= 0 || conf.RefreshMaxTTL <= 0 {
 		return nil, errors.New("refresh ttl must be positive")
 	}
