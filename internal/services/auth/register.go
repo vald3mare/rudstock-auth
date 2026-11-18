@@ -10,7 +10,10 @@ import (
 func (s *authService) Register(ctx context.Context, in RegUserInput) (AuthResult, error) {
 	email := normalizeEmail(in.Email)
 	addr, err := mail.ParseAddress(email)
-	if err != nil || addr.Address != email {
+	if err != nil {
+		return AuthResult{}, models.ErrInvalidEmail
+	}
+	if addr.Address != email {
 		return AuthResult{}, models.ErrInvalidEmail
 	}
 

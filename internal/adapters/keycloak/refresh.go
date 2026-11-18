@@ -2,7 +2,6 @@ package keycloak
 
 import (
 	"context"
-	"net/url"
 
 	"github.com/vald3mare/rudstock-auth/internal/models"
 )
@@ -11,12 +10,13 @@ func (a *keycloack) Refresh(ctx context.Context, refresh string) (models.Tokens,
 	if refresh == "" {
 		return models.Tokens{}, models.ErrInvalidRefresh
 	}
-	tokens, err := a.requestTokens(ctx, url.Values{
-		"grant_type":    {"refresh_token"},
-		"refresh_token": {refresh},
-	})
+	result, err := a.requestTokensByRefresh(ctx, refreshToken(refresh))
+
 	if hasErrorCode(err, "invalid_grant") {
 		return models.Tokens{}, models.ErrInvalidRefresh
 	}
-	return tokens, err
+	if err != nil {
+		return models.Tokens{}, err
+	}
+	return result.tokenPair()
 }

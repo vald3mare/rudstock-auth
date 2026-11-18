@@ -27,8 +27,10 @@ func (r *userRepo) Create(ctx context.Context, user models.User) (uuid.UUID, err
 	if err != nil {
 		// 23505 unique_violation по email; имя ограничения проверяем, чтобы будущие UNIQUE не выдавались за "email занят"
 		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgErr.Code == "23505" && pgErr.ConstraintName == "users_email_key" {
-			return uuid.Nil, models.ErrEmailTaken
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == "23505" && pgErr.ConstraintName == "users_email_key" {
+				return uuid.Nil, models.ErrEmailTaken
+			}
 		}
 		return uuid.Nil, fmt.Errorf("insert user: %w", err)
 	}
