@@ -2,18 +2,33 @@ package keycloak
 
 import (
 	"context"
+	"net/http"
 	"net/url"
+	"strings"
 )
-
-const logoutEndpoint = "logout"
 
 func (a *keycloack) Logout(ctx context.Context, refresh string) error {
 	if refresh == "" {
 		return nil
 	}
-	err := a.postForm(ctx, logoutEndpoint, url.Values{refreshTokenKey: {refresh}}.Encode(), nil)
+	form := url.Values{
+		"client_id":     {a.clientID},
+		"client_secret": {a.clientSecret},
+		"refresh_token": {refresh},
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, a.oidcBase.JoinPath("logout").String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", formContentType)
+
+	res, err := a.send(req)
 	if hasErrorCode(err, "invalid_grant") || hasErrorCode(err, "invalid_token") {
 		return nil
 	}
-	return err
+	if err != nil {
+		return err
+	}
+	_ = res.Body.Close()
+	return nil
 }

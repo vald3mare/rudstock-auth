@@ -2,28 +2,27 @@ package keycloak
 
 import (
 	"context"
-	"errors"
+	"net/http"
 	"net/url"
-
-	"github.com/vald3mare/rudstock-auth/internal/models"
+	"strings"
 )
 
-func (a *keycloack) requestTokensByRefresh(ctx context.Context, refresh string) (models.Tokens, error) {
+func (a *keycloack) requestTokensByRefresh(ctx context.Context, refresh refreshToken) (tokenResponse, error) {
 	form := url.Values{
-		grantTypeKey:    {grantTypeRefreshToken},
-		refreshTokenKey: {refresh},
+		"client_id":     {a.clientID},
+		"client_secret": {a.clientSecret},
+		"grant_type":    {"refresh_token"},
+		"refresh_token": {string(refresh)},
 	}
-	return a.requestTokenPair(ctx, form.Encode())
-}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, a.oidcBase.JoinPath("token").String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return tokenResponse{}, err
+	}
+	req.Header.Set("Content-Type", formContentType)
 
-func (a *keycloack) requestTokenPair(ctx context.Context, encodedForm string) (models.Tokens, error) {
-	var result tokenResponse
-	if err := a.postForm(ctx, tokenEndpoint, encodedForm, &result); err != nil {
-		return models.Tokens{}, err
+	res, err := a.send(req)
+	if err != nil {
+		return tokenResponse{}, err
 	}
-	if result.Access == "" || result.Refresh == "" {
-		return models.Tokens{}, errors.New("Keycloak did not return an access and refresh token pair")
-	}
-
-	return models.Tokens{Access: result.Access, Refresh: result.Refresh}, nil
+	return decodeJSON[tokenResponse](res)
 }

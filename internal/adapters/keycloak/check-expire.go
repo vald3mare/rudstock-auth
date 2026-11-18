@@ -7,6 +7,6 @@ import (
 )
 
 func (a *keycloack) CheckExpire(ctx context.Context, access string) (models.Identity, error) {
-	_, identity, err := a.checkAccessToken(ctx, access)
+	_, identity, err := a.checkAccessToken(ctx, accessToken(access))
 	return identity, err
 }

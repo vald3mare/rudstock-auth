@@ -9,14 +9,7 @@ import (
 	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
-const (
-	tokenEndpoint              = "token"
-	grantTypeKey               = "grant_type"
-	grantTypePassword          = "password"
-	grantTypeClientCredentials = "client_credentials"
-	refreshTokenKey            = "refresh_token"
-	grantTypeRefreshToken      = "refresh_token"
-)
+const formContentType = "application/x-www-form-urlencoded"
 
 type Cloak interface {
 	Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error)
@@ -36,6 +29,7 @@ type Config struct {
 type keycloack struct {
 	client       *http.Client
 	issuer       string
+	oidcBase     *url.URL
 	baseURL      *url.URL
 	realm        string
 	clientID     string
@@ -48,11 +42,13 @@ func New(conf Config) (Cloak, error) {
 		return nil, err
 	}
 
+	issuer := base.JoinPath("realms", url.PathEscape(conf.Realm))
 	return &keycloack{
 		client:       newHTTPClient(),
 		baseURL:      base,
 		realm:        conf.Realm,
-		issuer:       base.JoinPath("realms", url.PathEscape(conf.Realm)).String(),
+		issuer:       issuer.String(),
+		oidcBase:     issuer.JoinPath("protocol", "openid-connect"),
 		clientID:     conf.ClientID,
 		clientSecret: conf.ClientSecret,
 	}, nil
