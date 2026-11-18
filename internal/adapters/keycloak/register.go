@@ -12,11 +12,15 @@ import (
 	"github.com/vald3mare/rudstock-auth/internal/models"
 )
 
+
+
 func (a *keycloack) Register(ctx context.Context, email, password string) (user models.User, tokens models.Tokens, err error) {
 	var admin tokenResponse
-	if err := a.postForm(ctx, tokenEndpoint, url.Values{grantTypeKey: {grantTypeClientCredentials}}.Encode(), &admin); err != nil {
-		return models.User{}, models.Tokens{}, fmt.Errorf("get Keycloak service account token: %w", err)
+	if res, err := a.postFormClientCrenedtials(ctx){
+		fmt.Println("aboba")
 	}
+
+	
 	if admin.Access == "" {
 		return models.User{}, models.Tokens{}, errors.New("Keycloak did not return a service account token")
 	}
